@@ -68,7 +68,8 @@ print(another.author)
 print(another.price)
 
 #Section E.3
-#--------------------------------------------------
+books = [favorite, another, still_another]
+sum(for book.price in books)/len(books)
 
 #Section E.4
 print(favorite.year < 1900)
