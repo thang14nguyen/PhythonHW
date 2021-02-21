@@ -1,0 +1,4 @@
+
+Sorry, can't reserve room 777; it is not in service now
+List of reservations after deleting one: 
+Thank you for perusing the Anteater BandB Reservation System! 
