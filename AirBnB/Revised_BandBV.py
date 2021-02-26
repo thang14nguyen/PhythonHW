@@ -77,6 +77,20 @@ def Bed_n_Breakfast():
             name = " ".join(text)
             m_res_list = res_list_by_name(name, res_list)
             file_str = "{}\n{}".format(file_str, res_list_by_name_str(name, m_res_list))
+        elif action == 'la':
+            arv_date = text[0]
+            arv_date_res_list = res_list_by_arv_date(arv_date, res_list)
+            file_str = "{}\n{}".format(file_str, res_list_by_arv_date_str(arv_date, arv_date_res_list))
+        elif action == 'ld':
+            dep_date = text[0]
+            dep_date_res_list = res_list_by_dep_date(dep_date, res_list)
+            file_str = "{}\n{}".format(file_str, res_list_by_dep_date_str(dep_date, dep_date_res_list))
+        elif action == 'lf':
+            available_rooms = check_available_rooms(BnB, text, res_list)
+            file_str = "{}\n{}".format(file_str, check_available_rooms_str(text, available_rooms))
+        elif action == 'lo':
+            unavailable_rooms = check_unavailable_rooms(BnB, text, res_list)
+            file_str = "{}\n{}".format(file_str, check_unavailable_rooms_str(text, unavailable_rooms))
 ##    print(BnB)
 ##    print(res_list)
     print(file_str)
@@ -187,7 +201,7 @@ def create_reservation(confirm, rev_room, arrival: 'mm/dd/yyyy', departure: 'mm/
 def res_str(r: Reservation):
     """Return reservation string from Reservation"""
     res_str = "Reserving room {} for {} -- Confirmation #{}\n\t(arriving {}, departing {})".format(
-        r.room_num, r.name, r.confirmation, r.arv_date, r.dep_date)
+        r.room_num, r.name, r.confirmation, r.arv_date.strftime('%m/%d/%Y'), r.dep_date.strftime('%m/%d/%Y'))
     return res_str
 
 
@@ -322,6 +336,8 @@ def check_date_logic(arv_date, dep_date, requested_room_resrvation):
         
 
 def check_between_reservations(arv_date, dep_date, requested_room_resrvation):
+    """"Check two logic conditions and return boolean if match with validate condition
+    Return true if there is no conflict in gaps between dates on list of reservation"""
     validate = [False, False]
     for i in range(len(requested_room_resrvation)):
         if i + 1 == len(requested_room_resrvation):
@@ -395,7 +411,7 @@ def res_list_by_room_num_str(room_num, room_res_list):
     header = "Reservations for room {}:".format(room_num)
     body = ''
     for room in room_res_list:
-        new_line = "\t{} to {}: {}".format(room.arv_date, room.dep_date, room.name)
+        new_line = "\t{} to {}: {}".format(room.arv_date.strftime('%m/%d/%Y'), room.dep_date.strftime('%m/%d/%Y'), room.name)
         body = body + '\n' + new_line
     return header + body
 
@@ -419,20 +435,108 @@ def res_list_by_name_str(name, name_res_list):
     header = "Reservations for {}:".format(name)
     body = ''
     for room in name_res_list:
-        new_line = "\t{} to {}: room {}".format(room.arv_date, room.dep_date, room.room_num)
+        new_line = "\t{} to {}: room {}".format(room.arv_date.strftime('%m/%d/%Y'), room.dep_date.strftime('%m/%d/%Y'), room.room_num)
         body = body + '\n' + new_line
+    return header + body
+
+
+## List reservation by arrival date ##
+
+def res_list_by_arv_date(date: "mm/dd/yyyy", res_list):
+    """Return a list of reservation that match a specified arival date"""
+    res_by_arv_date = []
+    arv = convert_date(date)
+    for room in res_list:
+        if room.arv_date == arv:
+            res_by_arv_date.append(room)
+    return res_by_arv_date
+
+def res_list_by_arv_date_str(date: "mm/dd/yyyy", res_list):
+    """Return a str from a list of reservation with a specified arival date"""
+    header = "Guests arriving on {}:".format(date)
+    body = ''
+    for room in res_list:
+        new_line = "\t{} (room {})".format(room.name, room.room_num)
+        body = body + '\n' + new_line
+    return header + body
+
+
+## List reservation by departure date ##
+
+def res_list_by_dep_date(date: "mm/dd/yyyy", res_list):
+    """Return a list of reservation that match a specified departure date"""
+    res_by_dep_date = []
+    dep = convert_date(date)
+    for room in res_list:
+        if room.dep_date == dep:
+            res_by_dep_date.append(room)
+    return res_by_dep_date
+
+def res_list_by_dep_date_str(date: "mm/dd/yyyy", res_list):
+    """Return a str from a list of reservation with a specified dep date"""
+    header = "Guests arriving on {}:".format(date)
+    body = ''
+    for room in res_list:
+        new_line = "\t{} (room {})".format(room.name, room.room_num)
+        body = body + '\n' + new_line
+    return header + body
+
+
+## List available rooms by specified date range ###
+
+def check_available_rooms(BnB, text, res_list):
+    """Return boolean for if all of the following logic functions are true"""
+    available_room = []
+    arv_date = convert_date(text[0])
+    dep_date = convert_date(text[1])
+    for room in BnB:
+        res_room_number = room.room_num
+        if res_room_unavailable_check(res_room_number, arv_date, dep_date, res_list):
+            available_room.append(res_room_number)
+    return available_room
+
+def check_available_rooms_str(text, available_room_list):
+    """Return a str from a list of available rooms for a specified date range"""
+    arv_date = text[0]
+    dep_date = text[1]
+    header = "Bed rooms are free between {} and {}:\n\t".format(arv_date, dep_date)
+    body = '\n\t'.join(available_room_list)
+    return header + body
+
+
+## List unavailable rooms by specified date range ###
+
+
+def check_unavailable_rooms(BnB, text, res_list):
+    """Return boolean for if all of the following logic functions are true"""
+    unavailable_room = []
+    arv_date = convert_date(text[0])
+    dep_date = convert_date(text[1])
+    for room in BnB:
+        res_room_number = room.room_num
+        if not res_room_unavailable_check(res_room_number, arv_date, dep_date, res_list):
+            unavailable_room.append(res_room_number)
+    return unavailable_room
+
+def check_unavailable_rooms_str(text, unavailable_room_list):
+    """Return a str from a list of available rooms for a specified date range"""
+    arv_date = text[0]
+    dep_date = text[1]
+    header = "Bed rooms are occupied between {} and {}:\n\t".format(arv_date, dep_date)
+    body = '\n\t'.join(unavailable_room_list)
     return header + body
 
     
 ### Test ###
     
-test1 = [Reservation(confirmation=1, room_num='301', arv_date=1, dep_date=2, name='Conrad Hilton'),
-         Reservation(confirmation=2, room_num='301', arv_date=3, dep_date=4, name='Thang Nguyen'),
-         Reservation(confirmation=3, room_num='302', arv_date=3, dep_date=4, name='Thang Nguyen')]
+##test1 = [Reservation(confirmation=1, room_num='301', arv_date=1, dep_date=2, name='Conrad Hilton'),
+##         Reservation(confirmation=2, room_num='301', arv_date=3, dep_date=4, name='Thang Nguyen'),
+##         Reservation(confirmation=3, room_num='302', arv_date=3, dep_date=4, name='Thang Nguyen')]
+##
+##test2 = res_list_by_room_num(301, test1)
+##str_test = res_list_by_room_num_str(301, test2)
+##print(str_test)
 
-test2 = res_list_by_room_num(301, test1)
-str_test = res_list_by_room_num_str(301, test2)
-print(str_test)
 
 ## Main Program ## 
 Bed_n_Breakfast()
