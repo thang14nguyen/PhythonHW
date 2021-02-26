@@ -30,7 +30,7 @@ def Bed_n_Breakfast():
         elif action == '**':
             skip_command()
         elif action == 'db':
-            result = DB_command(text[0],BnB)                #Structure similar to RR command would have been better here
+            result = DB_command(text[0], BnB)                #Structure similar to RR command would have been better here
             if type(result) == list:
                 BnB = result
             else:
@@ -45,11 +45,10 @@ def Bed_n_Breakfast():
         elif action == 'lr':
             file_str = "{}\n{}".format(file_str, LR_command(res_list))
         elif action == 'dr':
-            if check_reservation(text[0], res_list):
-                n_res_list = DR_command(text[0], res_list)
-                print(n_res_list)
-                res_list = n_res_list
-            elif not check_reservation(text[0], res_list):
+            confirmation_number = int(text[0])
+            if check_reservation(confirmation_number, res_list):
+                res_list = DR_command(confirmation_number, res_list)
+            elif not check_reservation(confirmation_number, res_list):
                 file_str = "{}\n{}".format(file_str, del_res_str(text[0]))
     print(res_list)
     print(file_str)
@@ -197,14 +196,14 @@ def LR_command(rl: "List of Reservations"):
 
 ###DR Delete Reservation##
 
-def check_reservation(confirmation_num, rl: "List of Reservations"):
+def check_reservation(confirmation_num: int, rl: "List of Reservations"):
     """Return boolean if confirmation number is in list of reservation"""
 ##    for reservation in rl:
 ##        if reservation.confirmation == confirmation_num:
 ##            return True
     return any(reservation.confirmation == confirmation_num for reservation in rl)
 
-def DR_command(confirmation_num, rl:"List of Reservations"):
+def DR_command(confirmation_num: int, rl:"List of Reservations"):
     """Remove reservation with matching confirmation number from list of Reservations, returns list"""
     for reservation in rl:
         if reservation.confirmation == confirmation_num:

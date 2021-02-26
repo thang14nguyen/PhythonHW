@@ -8,47 +8,48 @@ Room = collections.namedtuple('Room', 'room_num available reservations')
 Reservation = collections.namedtuple('Reservation', 'confirmation arv_date dep_date name')
 Cmd = collections.namedtuple('Cmd', 'action text')
 
-BnB = []
-RL = []
-confirm_num = 0
+
 
 
 def Bed_n_Breakfast():
     """Execute BBcommands.txt file"""
     BnB = []
+    RL = []
     file_str = ''
-    Cmd_list = read_cmd_file()
-    for index in range(len(Cmd_list)):
-        current_Cmd = Cmd_list[index]
-        print(current_Cmd)
-        Cmd_action = current_Cmd.action.lower()
-        if Cmd_action == 'nb':
-            new_room = NB_command(current_Cmd.text[0])
+    cmd_list = read_cmd_file()
+    for index in range(len(cmd_list)):
+        current_cmd = cmd_list[index]
+##        print(current_Cmd)
+        cmd_action = current_cmd.action.lower()
+        cmd_text = current_cmd.text
+        if cmd_action == 'nb':
+            new_room = NB_command(cmd_text[0])
             BnB.append(new_room)
-        elif Cmd_action == 'lb':
-            available_rooms = LB_command(BnB)
-            available_rooms_str = room_num_str(available_rooms)
-            file_str = "{}\n{}".format(file_str, available_rooms_str)
-        elif Cmd_action == 'pl':
-            line = PL_command(current_Cmd)
+        elif cmd_action == 'lb':
+            available_rooms = room_num_str(LB_command(BnB))
+##            available_rooms_str = room_num_str(available_rooms)
+##            file_str.join(file_str, available_rooms_str)
+            file_str.join(available_rooms)
+        elif cmd_action == 'pl':
+            line = PL_command(current_cmd)
             file_str = "{}\n{}".format(file_str, line)
-        elif Cmd_action == '**':
+        elif cmd_action == '**':
             skip_command()
-        elif Cmd_action == 'db':
-            if any(Room.room_num == current_Cmd.text[0] for Room in BnB):
-                BnB = DB_command(current_Cmd.text[0], BnB)
+        elif cmd_action == 'db':
+            if any(Room.room_num == current_cmd.text[0] for Room in BnB):
+                BnB = DB_command(current_cmd.text[0], BnB)
             else:
                 file_str = "{}\nSorry, can't delete room {}; it is not in service now".format(
-                        file_str, current_Cmd.text[0])
+                        file_str, current_cmd.text[0])
         elif Cmd_action == 'rr':
-            if any(Room.room_num == current_Cmd.text[0] for Room in BnB):
+            if any(Room.room_num == current_cmd.text[0] for Room in BnB):
                 for i in range(len(BnB)):
                     current_room = BnB[i]
-                    if current_Cmd.text[0] == current_room.room_num:
+                    if current_cmd.text[0] == current_room.room_num:
                         current_room = Room(current_room.room_num, True,
-                                            RR_command(current_room.room_num, current_Cmd.text[1],
-                                                       current_Cmd.text[2],
-                                                       str(current_Cmd.text[3] + current_Cmd.text[4])))
+                                            RR_command(current_room.room_num, current_cmd.text[1],
+                                                       current_cmd.text[2],
+                                                       str(current_cmd.text[3] + current_cmd.text[4])))
                 BnB[i] = current_room
             else:
                 file_str = "{}\nSorry, can't reserve room {}; it is not in service now".format(
@@ -139,10 +140,10 @@ def convert_date(date: 'mm/dd/yyyy'):
     return date_obj
 
 
-reserve1 = RR_command('405', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
-reserve2 = RR_command('406', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
-reserve3 = RR_command('407', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
-print(RL)
+##reserve1 = RR_command('405', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
+##reserve2 = RR_command('406', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
+##reserve3 = RR_command('407', '01/20/2020', '01/25/2020', 'Nguyen, Thang')
+##print(RL)
 
 Bed_n_Breakfast()
 

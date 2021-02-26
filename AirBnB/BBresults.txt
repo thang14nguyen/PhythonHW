@@ -1,4 +1,28 @@
 
-Sorry, can't reserve room 777; it is not in service now
-List of reservations after deleting one: 
-Thank you for perusing the Anteater BandB Reservation System! 
+Reserving room 503 for I. Joliet -- Confirmation #1
+	(arriving 2012-12-10, departing 2012-12-15)
+Reserving room 502 for I. Joliet -- Confirmation #2
+	(arriving 2013-01-10, departing 2013-01-15)
+Reserving room 502 for K. Leavenworth -- Confirmation #3
+	(arriving 2012-12-10, departing 2012-12-14)
+Reserving room 502 for K. Leavenworth -- Confirmation #4
+	(arriving 2013-12-10, departing 2013-12-14)
+Reserving room 504 for C. S. Quentin -- Confirmation #5
+	(arriving 2013-02-15, departing 2013-12-14)
+Number of reservations: 5
+No. Rm. Arrive      Depart     Guest
+------------------------------------------------
+  1 503 12/10/2012 12/15/2012  I. Joliet
+  2 502 01/10/2013 01/15/2013  I. Joliet
+  3 502 12/10/2012 12/14/2012  K. Leavenworth
+  4 502 12/10/2013 12/14/2013  K. Leavenworth
+  5 504 02/15/2013 12/14/2013  C. S. Quentin
+Reservations for room 502:
+	2012-12-10 to 2012-12-14: K. Leavenworth
+	2013-01-10 to 2013-01-15: I. Joliet
+	2013-12-10 to 2013-12-14: K. Leavenworth
+Reservations for K. Leavenworth:
+	2012-12-10 to 2012-12-14: room 502
+	2013-12-10 to 2013-12-14: room 502
+Reservations for C. S. Quentin:
+	2013-02-15 to 2013-12-14: room 504
